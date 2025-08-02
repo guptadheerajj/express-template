@@ -1,23 +1,18 @@
 // Example Express.js application
 const express = require('express');
+require('dotenv').config({ debug: process.env.DEBUG });
+const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
+const assetsPath = process.env.assetsPath || path.join(__dirname, 'public');
 
 // Middleware
 app.use(express.json());
+app.use(express.static(assetsPath));
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.get('/', (req, res) => {
-	res.json({
-		message: 'Hello World!',
-		timestamp: new Date().toISOString(),
-	});
-});
-
-app.get('/health', (req, res) => {
-	res.status(200).json({ status: 'OK' });
-});
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -25,7 +20,6 @@ app.use((err, req, res, next) => {
 	res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// Start server
 app.listen(port, () => {
 	console.log(`Server is running on port ${port}`);
 });
